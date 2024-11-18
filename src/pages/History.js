@@ -5,6 +5,7 @@ import { useEffect, useState } from 'react';
 import SearchBar from '../components/SearchBar';
 import { useNavigate } from 'react-router-dom';
 
+
 const History = () => {
 
     const navigate = useNavigate();
