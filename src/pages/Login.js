@@ -2,6 +2,7 @@ import { useState } from 'react';
 import '../styles.css';
 import axios from 'axios';
 import logo from '../images/logo.png';
+import { useNavigate } from 'react-router-dom';
 
 const Login = () => {
     const [email, setEmail] = useState('');
@@ -10,11 +11,15 @@ const Login = () => {
     const [details, setDetails] = useState('');
     const [success, setSuccess] = useState('');
 
+    const navigate = useNavigate();
+
+
     const handleLogin = () => {
         axios.post('http://localhost:4000/user/login', { email: email, password: password })
         .then((response) => {
             localStorage.setItem('accessToken', response.data.accessToken);
             localStorage.setItem('refreshToken', response.data.refreshToken);
+            navigate('/history');
         })
         .catch((error) => {
             console.log(error);

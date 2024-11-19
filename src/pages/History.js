@@ -4,6 +4,8 @@ import { FaChevronRight } from "react-icons/fa";
 import { useEffect, useState } from 'react';
 import SearchBar from '../components/SearchBar';
 import { useNavigate } from 'react-router-dom';
+import { jwtDecode } from 'jwt-decode';
+
 
 const History = () => {
 
@@ -20,8 +22,8 @@ const History = () => {
         return `${day}/${month}/${year}`;
     }
 
-    const handleGetChats = () => {
-        axios.post('http://localhost:4000/chat/get-chats', { userId: 11})
+    const handleGetChats = (userId) => {
+        axios.post('http://localhost:4000/chat/get-chats', { userId: userId})
         .then((response) => {
             setChats(response.data.data);
         })
@@ -40,7 +42,9 @@ const History = () => {
     }
 
     useEffect(() => {
-        handleGetChats();
+        const accessToken = localStorage.getItem('accessToken');
+        const decoded = jwtDecode(accessToken);
+        handleGetChats(decoded.id);
     }, []);
 
     return(

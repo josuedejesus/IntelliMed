@@ -3,6 +3,7 @@ import ChatBox from '../components/ChatBox';
 import '../styles.css';
 import axios from 'axios';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
+import { jwtDecode } from 'jwt-decode';
 
 const Chat = () => {
 
@@ -14,6 +15,8 @@ const Chat = () => {
     const [content, setContent] = useState(undefined);
 
     const [messages, setMesages] = useState([]);
+
+    const [userId, setUserId] = useState('');
 
     const handleGetMessages = (chatId) => {
         axios.post('http://localhost:4000/chat/get-messages', { chatId: chatId })
@@ -29,7 +32,7 @@ const Chat = () => {
 
     const handleNewChat = () => {
         const chatData = {
-            user_id: 11,
+            user_id: userId,
             title: "Test",
         };
 
@@ -105,6 +108,9 @@ const Chat = () => {
         } else {
             console.log('new chat');
         }
+        const accessToken = localStorage.getItem('accessToken');
+        const decoded = jwtDecode(accessToken);
+        setUserId(decoded.id);
 
     }, []);
 
