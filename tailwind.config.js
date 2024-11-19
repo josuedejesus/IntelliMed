@@ -17,6 +17,10 @@ module.exports = {
           '50%': { borderColor: 'transparent' },
         },
       },
+      colors: {
+        backgroundBlue: '#8BF8F6',
+        buttonGreen: '#003A3E'
+      }
     },
   },
   plugins: [],
