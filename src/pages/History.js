@@ -4,6 +4,8 @@ import { FaChevronRight } from "react-icons/fa";
 import { useEffect, useState } from 'react';
 import SearchBar from '../components/SearchBar';
 import { useNavigate } from 'react-router-dom';
+import { jwtDecode } from 'jwt-decode';
+
 
 
 const History = () => {
@@ -13,16 +15,16 @@ const History = () => {
     const [chats, setChats] = useState([]);
 
     function formatDate(timestamp) {
-        const date = new Date(timestamp); // Crear un objeto Date a partir del timestamp
-        const day = String(date.getDate()).padStart(2, '0'); // Obtener el día y asegurarse de que tenga 2 dígitos
-        const month = String(date.getMonth() + 1).padStart(2, '0'); // Obtener el mes (0-indexado) y asegurarse de que tenga 2 dígitos
-        const year = date.getFullYear(); // Obtener el año
+        const date = new Date(timestamp); 
+        const day = String(date.getDate()).padStart(2, '0');
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const year = date.getFullYear(); 
 
         return `${day}/${month}/${year}`;
     }
 
-    const handleGetChats = () => {
-        axios.post('http://localhost:4000/chat/get-chats', { userId: 11})
+    const handleGetChats = (userId) => {
+        axios.post('http://localhost:4000/chat/get-chats', { userId: userId})
         .then((response) => {
             setChats(response.data.data);
         })
@@ -41,7 +43,9 @@ const History = () => {
     }
 
     useEffect(() => {
-        handleGetChats();
+        const accessToken = localStorage.getItem('accessToken');
+        const decoded = jwtDecode(accessToken);
+        handleGetChats(decoded.id);
     }, []);
 
     return(
