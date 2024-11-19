@@ -3,7 +3,10 @@ import '../styles.css'
 
 
 
-const NavBar = () => {
+const NavBar = ({
+    onLogin,
+    onRegister
+}) => {
 
     return (
         <nav className="flex items-center justify-between bg-blue-100 p-4 shadow-md">
@@ -14,10 +17,10 @@ const NavBar = () => {
             <div className="flex items-center">
                 <a href="#" className="text-gray-600 hover:text-gray-800">Servicios</a>
                 <a href="#" className="text-gray-600 hover:text-gray-800 ml-4">Contactanos</a>
-                <button className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-600 ml-4">
+                <button onClick={onLogin} className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-600 ml-4">
                     Iniciar Sesión
                 </button>
-                <button className="bg-white-600 text-blue px-4 py-2 rounded hover:bg-white-600">
+                <button onClick={onRegister} className="bg-white-600 text-blue px-4 py-2 rounded hover:bg-white-600">
                     Registrate
                 </button>
             </div>

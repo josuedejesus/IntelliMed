@@ -61,7 +61,7 @@ const Register = () => {
     }
 
     return(
-        <div className="flex justify-center items-center w-full h-screen bg-backgroundBlue">
+        <div className="flex justify-center items-center w-full h-screen bg-blue-100">
             <div className="flex w-[90%] rounded-2xl">
                 <div className="flex justify-center items-center w-[60%] bg-black rounded-l-2xl">
                     <img 
