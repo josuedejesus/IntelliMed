@@ -7,6 +7,7 @@ import Chat from './pages/Chat';
 import History from './pages/History';
 import Login from './pages/Login';
 import Register from './pages/Register';
+import Profileconfig from './pages/Profileconfig';
 
 function App() {
   return (
@@ -19,6 +20,7 @@ function App() {
           <Route path='/login' element={<Login/>}/>
           <Route path='/register' element={<Register/>}/>
           <Route path='/home' element={<Home/>}/>
+          <Route path='/adjustments' element={<Profileconfig/>}/>
         </Routes>
       </Router>
     </div>
