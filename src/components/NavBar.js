@@ -1,12 +1,28 @@
+import { FaRegUser, FaUser } from 'react-icons/fa';
 import '../styles.css'
+import { useEffect, useState } from 'react';
+import { jwtDecode } from 'jwt-decode';
 
 
 
 
 const NavBar = ({
     onLogin,
-    onRegister
+    onRegister,
+    onSignOut,
 }) => {
+
+    const [user, setUser] = useState(undefined);
+    const [show, setShow] = useState(false);
+
+    useEffect(() => {
+        const accessToken = localStorage.getItem('accessToken');
+        if (accessToken) {
+            const decoded = jwtDecode(accessToken);
+            setUser(decoded);
+        }
+        
+    }, []);
 
     return (
         <nav className="flex items-center justify-between bg-blue-100 p-4 shadow-md">
@@ -17,12 +33,37 @@ const NavBar = ({
             <div className="flex items-center">
                 <a href="#" className="text-gray-600 hover:text-gray-800">Servicios</a>
                 <a href="#" className="text-gray-600 hover:text-gray-800 ml-4">Contactanos</a>
-                <button onClick={onLogin} className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-600 ml-4">
-                    Iniciar Sesión
-                </button>
-                <button onClick={onRegister} className="bg-white-600 text-blue px-4 py-2 rounded hover:bg-white-600">
-                    Registrate
-                </button>
+                {user ? (
+                    <div className='flex items-center justify-center space-x-1 ml-5'>
+                        <p>{user.name}</p>
+                        <p>{user.lastname}</p>
+                        <button onClick={() => setShow(!show)} className='flex justify-center items-center border w-[40px] h-[40px] bg-white rounded-3xl'>
+                            <FaRegUser/>
+                        </button>
+                        <div className='absolute right-0 mt-14 w-48'>
+                            {show && (
+                                <div className='absolute right-0 mt-2 w-48 bg-white border rounded-b-md shadow-lg'>
+                                    <ul className='py-2'>
+                                        <li className='px-4 py-2 hover:bg-gray-100 cursor-pointer'>Ajustes</li>
+                                        <li onClick={onSignOut} className='px-4 py-2 hover:bg-gray-100 cursor-pointer'>Cerrar Sesión</li>
+                                    </ul>
+                                </div>
+                            )}
+                        </div>
+                    </div>
+                ):(
+                    <div>
+                        <button onClick={onLogin} className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-600 ml-4">
+                            Iniciar Sesión
+                        </button>
+                        <button onClick={onRegister} className="bg-white-600 text-blue px-4 py-2 rounded hover:bg-white-600">
+                            Registrate
+                        </button>
+                        
+                    </div>
+                )}
+                
+                
             </div>
         </nav>
     )

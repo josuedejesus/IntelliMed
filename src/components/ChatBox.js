@@ -33,7 +33,7 @@ const ChatBox = ({
       }, [mess]);
 
     return(
-        <div className='h-[800px] w-[50%] border pt-5 rounded-md'>
+        <div className='h-[750px] w-[80%] border pt-5 rounded-md'>
             {loading ? (
                 <div className="flex flex-col items-center justify-center w-full h-screen">
                     <ClipLoader

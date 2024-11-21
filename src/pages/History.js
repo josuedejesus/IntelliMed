@@ -1,10 +1,11 @@
 import axios from 'axios';
 import '../styles.css';
-import { FaChevronRight } from "react-icons/fa";
+import { FaChevronRight, FaHistory, FaPlus } from "react-icons/fa";
 import { useEffect, useState } from 'react';
 import SearchBar from '../components/SearchBar';
 import { useNavigate } from 'react-router-dom';
 import { jwtDecode } from 'jwt-decode';
+import NavBar from '../components/NavBar';
 
 
 
@@ -42,16 +43,35 @@ const History = () => {
         navigate('/chat')
     }
 
+    const handleEndSession = () => {
+        localStorage.removeItem('accessToken');
+        localStorage.removeItem('refreshToken');
+        window.location.href = '/';
+    }
+
     useEffect(() => {
         const accessToken = localStorage.getItem('accessToken');
-        const decoded = jwtDecode(accessToken);
-        handleGetChats(decoded.id);
+        if (accessToken) {
+            const decoded = jwtDecode(accessToken);
+            handleGetChats(decoded.id);
+        } else {
+            navigate('/home');
+        }
+        
     }, []);
 
     return(
         <div className='flex flex-col bg-gray-100 h-screen'>
+            <NavBar
+                //onLogin={handleLogin}
+                //onRegister={handleRegister}
+                onSignOut={handleEndSession}
+             />
             <ul className='flex w-full p-2'>
-                <li onClick={handleNewChat} className='border rounded-md p-2 cursor-pointer bg-white'>Nuevo Analisis</li>
+                <li onClick={handleNewChat} className='flex items-center border rounded-md p-2 cursor-pointer space-x-2 bg-white'>
+                    <FaPlus/>
+                    <p>Nuevo Analisis</p>
+                </li>
             </ul>
             <div className='p-1'>
                 <SearchBar/>

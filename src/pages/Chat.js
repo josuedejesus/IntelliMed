@@ -4,6 +4,8 @@ import '../styles.css';
 import axios from 'axios';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { jwtDecode } from 'jwt-decode';
+import NavBar from '../components/NavBar';
+import { FaHistory, FaRegBookmark } from 'react-icons/fa';
 
 const Chat = () => {
 
@@ -96,6 +98,12 @@ const Chat = () => {
         navigate('/history');
     }
 
+    const handleEndSession = () => {
+        localStorage.removeItem('accessToken');
+        localStorage.removeItem('refreshToken');
+        window.location.href = '/';
+    }
+
     useEffect(() => {
         if (chatId && content) {
             handleNewMessage(chatId, content);
@@ -105,25 +113,33 @@ const Chat = () => {
 
     useEffect(() => {
         //const location = useLocation();
-        if (id) {
-            setChatId(id);
-            handleGetMessages(id);
-            setLoading(true)
-        } else {
-            console.log('new chat');
-        }
         const accessToken = localStorage.getItem('accessToken');
-        const decoded = jwtDecode(accessToken);
-        setUserId(decoded.id);
-
+        if (accessToken) {
+            const decoded = jwtDecode(accessToken);
+            setUserId(decoded.id);
+            if (id) {
+                setChatId(id);
+                handleGetMessages(id);
+                setLoading(true)
+            } else {
+                console.log('new chat');
+            }
+        }
     }, []);
 
     return(
         <div className='w-full h-screen bg-gray-100'>
-            <ul className='flex w-full p-2 '>
-                <li onClick={handleHistory} className='border rounded-md p-2 cursor-pointer bg-white'>Historial</li>
+            <NavBar
+                onSignOut={handleEndSession}
+            />
+
+            <ul className='flex w-full p-2'>
+                <li onClick={handleHistory} className='flex items-center border rounded-md p-2 cursor-pointer space-x-2 bg-white'>
+                    <FaRegBookmark/>
+                    <p>Historial</p>
+                </li>
             </ul>
-            <div className=''>
+            <div className='flex justify-center items-center'>
                 <ChatBox
                     loading={loading}
                     onSend={handleSendMessage}
