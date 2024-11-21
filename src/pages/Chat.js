@@ -4,6 +4,8 @@ import '../styles.css';
 import axios from 'axios';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { jwtDecode } from 'jwt-decode';
+import NavBar from '../components/NavBar';
+import { FaHistory, FaRegBookmark } from 'react-icons/fa';
 
 const Chat = () => {
 
@@ -18,15 +20,18 @@ const Chat = () => {
 
     const [userId, setUserId] = useState('');
 
+    const [loading, setLoading] = useState(undefined);
+
     const handleGetMessages = (chatId) => {
         axios.post('http://localhost:4000/chat/get-messages', { chatId: chatId })
         .then((response) => {
-            console.log('chat_id', chatId);
-            console.log(response.data.data);
             setMesages(response.data.data);
         })
         .catch((error) => {
 
+        })
+        .finally(() => {
+            setLoading(false);
         })
     }
 
@@ -93,6 +98,12 @@ const Chat = () => {
         navigate('/history');
     }
 
+    const handleEndSession = () => {
+        localStorage.removeItem('accessToken');
+        localStorage.removeItem('refreshToken');
+        window.location.href = '/';
+    }
+
     useEffect(() => {
         if (chatId && content) {
             handleNewMessage(chatId, content);
@@ -102,25 +113,35 @@ const Chat = () => {
 
     useEffect(() => {
         //const location = useLocation();
-        if (id) {
-            setChatId(id);
-            handleGetMessages(id);
-        } else {
-            console.log('new chat');
-        }
         const accessToken = localStorage.getItem('accessToken');
-        const decoded = jwtDecode(accessToken);
-        setUserId(decoded.id);
-
+        if (accessToken) {
+            const decoded = jwtDecode(accessToken);
+            setUserId(decoded.id);
+            if (id) {
+                setChatId(id);
+                handleGetMessages(id);
+                setLoading(true)
+            } else {
+                console.log('new chat');
+            }
+        }
     }, []);
 
     return(
-        <div>
+        <div className='w-full h-screen bg-gray-100'>
+            <NavBar
+                onSignOut={handleEndSession}
+            />
+
             <ul className='flex w-full p-2'>
-                <li onClick={handleHistory} className='border rounded-md p-2 cursor-pointer'>Historial</li>
+                <li onClick={handleHistory} className='flex items-center border rounded-md p-2 cursor-pointer space-x-2 bg-white'>
+                    <FaRegBookmark/>
+                    <p>Historial</p>
+                </li>
             </ul>
-            <div className=''>
+            <div className='flex justify-center items-center'>
                 <ChatBox
+                    loading={loading}
                     onSend={handleSendMessage}
                     messages={messages}
                 />

@@ -1,9 +1,12 @@
 import { useEffect, useState } from 'react';
 import '../styles.css';
+import { ClipLoader } from "react-spinners";
+
 
 const ChatBox = ({
     onSend,
-    messages
+    messages,
+    loading,
 }) => {
 
     const [message, setMessage] = useState('');
@@ -30,8 +33,17 @@ const ChatBox = ({
       }, [mess]);
 
     return(
-        <div className='h-[800px] w-[50%] border pt-5 rounded-md'>
-            <div className='h-[95%] bg-gray-300 p-2'>
+        <div className='h-[750px] w-[80%] border pt-5 rounded-md'>
+            {loading ? (
+                <div className="flex flex-col items-center justify-center w-full h-screen">
+                    <ClipLoader
+                        size={80}
+                        color="#4fa94d"
+                        loading={true}
+                    />
+                </div>
+            ) : (
+                <div className='h-[95%] bg-gray-300 p-2'>
                 {messages.length > 0 ? (
                     messages.map((message, index) => (
                         <div className="bg-blue-500 text-white w-[50%] p-4 rounded-lg mb-2 break-words">
@@ -47,11 +59,18 @@ const ChatBox = ({
                 )}
                 
                 
-            </div>
-            <div className='flex justify-center items-center h-[5%]'>
-                <input value={message} onChange={(e) => setMessage(e.target.value)} className='w-[80%] h-[90%] ml-1 focus:outline-none'/>
-                <button disabled={message === ''} onClick={handleSendMessage} className={`border p-1 ml-1 mr-1 w-[20%] rounded-md ${message === '' ? 'bg-gray-300 ' : 'bg-white'}`}>Enviar</button>
-            </div>
+                </div>
+            )}
+            
+            <form className='flex justify-center items-center h-[5%]'
+                onSubmit={(e) => {
+                    e.preventDefault();
+                    handleSendMessage();
+                }}
+            >
+                <input value={message} onChange={(e) => setMessage(e.target.value)} className='w-[80%] h-[90%] ml-1 focus:outline-none rounded-md'/>
+                <button type="submit" disabled={message === ''}  className={`p-1 ml-1 mr-1 w-[20%] rounded-md ${message === '' ? 'bg-gray-300 ' : 'bg-blue-400 text-white'}`}>Enviar</button>
+            </form>
         </div>
     )
 }
