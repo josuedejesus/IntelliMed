@@ -51,7 +51,7 @@ const History = () => {
     return(
         <div className='flex flex-col bg-gray-100 h-screen'>
             <ul className='flex w-full p-2'>
-                <li onClick={handleNewChat} className='border rounded-md p-2 cursor-pointer'>Nuevo Analisis</li>
+                <li onClick={handleNewChat} className='border rounded-md p-2 cursor-pointer bg-white'>Nuevo Analisis</li>
             </ul>
             <div className='p-1'>
                 <SearchBar/>

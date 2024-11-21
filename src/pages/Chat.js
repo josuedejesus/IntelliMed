@@ -18,15 +18,18 @@ const Chat = () => {
 
     const [userId, setUserId] = useState('');
 
+    const [loading, setLoading] = useState(undefined);
+
     const handleGetMessages = (chatId) => {
         axios.post('http://localhost:4000/chat/get-messages', { chatId: chatId })
         .then((response) => {
-            console.log('chat_id', chatId);
-            console.log(response.data.data);
             setMesages(response.data.data);
         })
         .catch((error) => {
 
+        })
+        .finally(() => {
+            setLoading(false);
         })
     }
 
@@ -105,6 +108,7 @@ const Chat = () => {
         if (id) {
             setChatId(id);
             handleGetMessages(id);
+            setLoading(true)
         } else {
             console.log('new chat');
         }
@@ -115,12 +119,13 @@ const Chat = () => {
     }, []);
 
     return(
-        <div>
-            <ul className='flex w-full p-2'>
-                <li onClick={handleHistory} className='border rounded-md p-2 cursor-pointer'>Historial</li>
+        <div className='w-full h-screen bg-gray-100'>
+            <ul className='flex w-full p-2 '>
+                <li onClick={handleHistory} className='border rounded-md p-2 cursor-pointer bg-white'>Historial</li>
             </ul>
             <div className=''>
                 <ChatBox
+                    loading={loading}
                     onSend={handleSendMessage}
                     messages={messages}
                 />
