@@ -40,7 +40,7 @@ const NavBar = ({
 
     return (
         <nav className="flex items-center justify-between bg-blue-100 p-4 shadow-md">
-            <div className="flex items-center">
+            <div onClick={() => handleRedirect('')} className="flex items-center cursor-pointer">
                 <img src="/images/intellimedlogo.png" alt="logo" className="w-10 h-10"/>
                 <h1 className="text-xl font-semibold ml-2">IntelliMed</h1>
             </div>
@@ -48,12 +48,12 @@ const NavBar = ({
                 <a href="#" className="text-gray-600 hover:text-gray-800">Servicios</a>
                 <a href="#" className="text-gray-600 hover:text-gray-800 ml-4">Contactanos</a>
                 {user ? (
-                    <div className='flex items-center justify-center space-x-1 ml-5'>
+                    <button onClick={() => setShow(!show)} className='flex items-center justify-center space-x-1 ml-5'>
                         <p>{user.name}</p>
                         <p>{user.lastname}</p>
-                        <button onClick={() => setShow(!show)} className='flex justify-center items-center border w-[40px] h-[40px] bg-white rounded-3xl'>
+                        <p className='flex justify-center items-center border w-[40px] h-[40px] bg-white rounded-3xl'>
                             <FaRegUser/>
-                        </button>
+                        </p>
                         <div className='absolute right-0 mt-14 w-48'>
                             {show && (
                                 <div className='absolute right-0 mt-2 w-48 bg-white border rounded-b-md shadow-lg'>
@@ -64,13 +64,13 @@ const NavBar = ({
                                 </div>
                             )}
                         </div>
-                    </div>
+                    </button>
                 ):(
                     <div>
-                        <button onClick={handleRedirect('login')} className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-600 ml-4">
+                        <button onClick={() => handleRedirect('login')} className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-600 ml-4">
                             Iniciar Sesión
                         </button>
-                        <button onClick={handleRedirect('register')} className="bg-white-600 text-blue px-4 py-2 rounded hover:bg-white-600">
+                        <button onClick={() => handleRedirect('register')} className="bg-white-600 text-blue px-4 py-2 rounded hover:bg-white-600">
                             Registrate
                         </button>
                         
