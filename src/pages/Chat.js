@@ -124,6 +124,8 @@ const Chat = () => {
             } else {
                 console.log('new chat');
             }
+        } else {
+            navigate('/');
         }
     }, []);
 

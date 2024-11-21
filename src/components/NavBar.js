@@ -36,7 +36,6 @@ const NavBar = ({
             const decoded = jwtDecode(accessToken);
             setUser(decoded);
         }
-        
     }, []);
 
     return (
