@@ -2,6 +2,7 @@ import { FaRegUser, FaUser } from 'react-icons/fa';
 import '../styles.css'
 import { useEffect, useState } from 'react';
 import { jwtDecode } from 'jwt-decode';
+import { useNavigate } from 'react-router-dom';
 
 
 
@@ -14,6 +15,20 @@ const NavBar = ({
 
     const [user, setUser] = useState(undefined);
     const [show, setShow] = useState(false);
+
+    const navigate= useNavigate();
+
+
+    const handleEndSession = () => {
+        localStorage.removeItem('accessToken');
+        localStorage.removeItem('refreshToken');
+        window.location.href = '/';
+    }
+
+    const handleRedirect = (route) => {
+        //window.location.href = `/${route}`;
+        navigate(`/${route}`);
+    }
 
     useEffect(() => {
         const accessToken = localStorage.getItem('accessToken');
@@ -44,8 +59,8 @@ const NavBar = ({
                             {show && (
                                 <div className='absolute right-0 mt-2 w-48 bg-white border rounded-b-md shadow-lg'>
                                     <ul className='py-2'>
-                                        <li className='px-4 py-2 hover:bg-gray-100 cursor-pointer'>Ajustes</li>
-                                        <li onClick={onSignOut} className='px-4 py-2 hover:bg-gray-100 cursor-pointer'>Cerrar Sesión</li>
+                                        <li onClick={() => handleRedirect('adjustments')} className='px-4 py-2 hover:bg-gray-100 cursor-pointer'>Ajustes</li>
+                                        <li onClick={handleEndSession} className='px-4 py-2 hover:bg-gray-100 cursor-pointer'>Cerrar Sesión</li>
                                     </ul>
                                 </div>
                             )}
@@ -53,10 +68,10 @@ const NavBar = ({
                     </div>
                 ):(
                     <div>
-                        <button onClick={onLogin} className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-600 ml-4">
+                        <button onClick={handleRedirect('login')} className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-600 ml-4">
                             Iniciar Sesión
                         </button>
-                        <button onClick={onRegister} className="bg-white-600 text-blue px-4 py-2 rounded hover:bg-white-600">
+                        <button onClick={handleRedirect('register')} className="bg-white-600 text-blue px-4 py-2 rounded hover:bg-white-600">
                             Registrate
                         </button>
                         
