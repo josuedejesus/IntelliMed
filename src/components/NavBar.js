@@ -46,7 +46,7 @@ const NavBar = ({
             </div>
             <div className="flex items-center">
                 <a href="#" className="text-gray-600 hover:text-gray-800">Servicios</a>
-                <a href="#" className="text-gray-600 hover:text-gray-800 ml-4">Contactanos</a>
+                <a onClick={() => handleRedirect('contacts')} href="#" className="text-gray-600 hover:text-gray-800 ml-4">Contactanos</a>
                 {user ? (
                     <button onClick={() => setShow(!show)} className='flex items-center justify-center space-x-1 ml-5'>
                         <p>{user.name}</p>

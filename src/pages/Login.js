@@ -33,9 +33,9 @@ const Login = () => {
     }
 
     return (
-        <div className="flex justify-center items-center w-full h-screen bg-blue-100">
-            <div className="flex w-[90%] h-[500px] rounded-2xl">
-                <div className="flex justify-center items-center w-[60%] bg-black rounded-l-2xl">
+        <div className="flex justify-center items-center w-full h-screen bg-blue-100 p-10">
+            <div className="flex w-[90%] rounded-2xl">
+                <div className="flex justify-center items-center w-[60%] bg-white rounded-l-2xl">
                     <img 
                         src={logo} 
                         alt="IntelliMed" 
