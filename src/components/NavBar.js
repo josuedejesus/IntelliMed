@@ -7,11 +7,7 @@ import { useNavigate } from 'react-router-dom';
 
 
 
-const NavBar = ({
-    onLogin,
-    onRegister,
-    onSignOut,
-}) => {
+const NavBar = () => {
 
     const [user, setUser] = useState(undefined);
     const [show, setShow] = useState(false);
@@ -26,7 +22,6 @@ const NavBar = ({
     }
 
     const handleRedirect = (route) => {
-        //window.location.href = `/${route}`;
         navigate(`/${route}`);
     }
 

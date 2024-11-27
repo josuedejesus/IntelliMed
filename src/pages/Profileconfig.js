@@ -1,4 +1,5 @@
 import { useNavigate } from 'react-router-dom';
+import NavBar from '../components/NavBar';
 
 const Profileconfig = () => {
 
@@ -9,7 +10,7 @@ const Profileconfig = () => {
     }
 
     return (
-        <div className="flex justify-center items-center w-full bg-blue-100 p-10 ">
+        <div className="flex flex-col justify-center items-center w-full bg-blue-100 p-10 ">
             <div className="flex w-[90%] rounded-2xl">
                 <div className="flex justify-center items-center w-[60%] bg-white rounded-l-2xl py-10">
                     <img 
@@ -28,19 +29,6 @@ const Profileconfig = () => {
                         <div className="flex flex-col items-start space-y-2">
                             <label>Apellido</label>
                             <input className="w-full border rounded-md p-2" />
-                        </div>
-                        <div className="flex flex-col items-start space-y-2">
-                            <label>Fecha de Nacimiento</label>
-                            <input type="date" className="w-full border rounded-md p-2" />
-                        </div>
-                        <div className="flex flex-col items-start space-y-2">
-                            <label>Género</label>
-                            <div className="space-x-2">
-                                <label htmlFor="m">Masculino</label>
-                                <input id="m" type="radio" name="gender" value="m" />
-                                <label htmlFor="f">Femenino</label>
-                                <input id="f" type="radio" name="gender" value="f" />
-                            </div>
                         </div>
                         <div className="flex flex-col items-start space-y-2">
                             <label>Correo Electrónico</label>

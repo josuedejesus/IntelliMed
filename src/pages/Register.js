@@ -60,6 +60,27 @@ const Register = () => {
         }
     }
 
+    const handlePhoneNumber = (number) => {
+        const cleanedNumber = number.replace(/\D/g, "");
+    
+        if (cleanedNumber.length === 0) {
+            setPhone("");
+            return;
+        }
+    
+        if (cleanedNumber.length > 8) {
+            return;
+        }
+    
+        const formattedNumber =
+            cleanedNumber.length <= 4
+                ? cleanedNumber
+                : `${cleanedNumber.slice(0, 4)}-${cleanedNumber.slice(4)}`;
+    
+        setPhone(formattedNumber);
+    };
+    
+
     return(
         <div className="flex justify-center items-center w-full bg-blue-100 p-10">
             <div className="flex w-[90%] rounded-2xl">
@@ -101,7 +122,7 @@ const Register = () => {
                         </div>
                         <div className="flex flex-col items-start space-y-2">
                             <label>Numero de Telefono</label>
-                            <input onChange={(e) => setPhone(e.target.value)} value={phone} className="w-full border rounded-md p-2" />
+                            <input onChange={(e) => handlePhoneNumber(e.target.value)} value={phone} className="w-full border rounded-md p-2" />
                         </div>
                         <div className="flex flex-col items-start space-y-2">
                             <label>Contraseña</label>

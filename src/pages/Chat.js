@@ -131,9 +131,7 @@ const Chat = () => {
 
     return(
         <div className='w-full h-screen bg-gray-100'>
-            <NavBar
-                onSignOut={handleEndSession}
-            />
+            <NavBar/>
 
             <ul className='flex w-full p-2'>
                 <li onClick={handleHistory} className='flex items-center border rounded-md p-2 cursor-pointer space-x-2 bg-white'>

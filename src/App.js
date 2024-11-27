@@ -9,6 +9,7 @@ import Login from './pages/Login';
 import Register from './pages/Register';
 import Profileconfig from './pages/Profileconfig';
 import Contacts from './pages/Contacts';
+import NavBar from './components/NavBar';
 
 function App() {
   return (

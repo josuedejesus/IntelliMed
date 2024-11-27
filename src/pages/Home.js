@@ -1,6 +1,8 @@
 import NavBar from '../components/NavBar';
 import Footer from '../components/Footer';
 import { useNavigate } from 'react-router-dom';
+import Modal from '../components/Modal';
+import Login from './Login';
 
 
 const Home = () => {
@@ -18,20 +20,13 @@ const Home = () => {
         }
     }
 
-    const handleRegister = () => {
-        navigate('/register');
-    }
-
     const handleLogin = () => {
         navigate('/login');
     }
 
     return (
         <div>
-            <NavBar
-                onLogin={handleRedirect}
-                onRegister={handleRegister}
-             />
+            <NavBar/>
             <div className="flex h-screen">
                 <div className="w-1/2 flex items-center justify-center">
                     <img src="/images/techbrain.png" alt="Welcome" className="max-w-full h-auto" />

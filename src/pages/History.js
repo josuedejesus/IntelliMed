@@ -62,11 +62,7 @@ const History = () => {
 
     return(
         <div className='flex flex-col bg-gray-100 h-screen'>
-            <NavBar
-                //onLogin={handleLogin}
-                //onRegister={handleRegister}
-                onSignOut={handleEndSession}
-             />
+            <NavBar/>
             <ul className='flex w-full p-2'>
                 <li onClick={handleNewChat} className='flex items-center border rounded-md p-2 cursor-pointer space-x-2 bg-white'>
                     <FaPlus/>
