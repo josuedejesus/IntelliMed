@@ -1,6 +1,15 @@
+import { useNavigate } from 'react-router-dom';
+
 const Profileconfig = () => {
+
+    const navigate = useNavigate();
+
+    const handleHome = () => {
+        navigate('/home');     
+    }
+
     return (
-        <div className="flex justify-center items-center w-full h-screen bg-blue-100 p-10 h-[60%]">
+        <div className="flex justify-center items-center w-full bg-blue-100 p-10 ">
             <div className="flex w-[90%] rounded-2xl">
                 <div className="flex justify-center items-center w-[60%] bg-white rounded-l-2xl py-10">
                     <img 
@@ -56,10 +65,10 @@ const Profileconfig = () => {
                         <p className="h-[30px]"></p>
                     </div>
                     <div className="flex w-full space-x-2">
-                        <button className="w-1/2 bg-buttonGreen text-white h-10 rounded-md">
+                        <button onClick={handleHome} className="w-1/2 bg-buttonGreen text-white h-10 rounded-md">
                             Salir
                         </button>
-                        <button className="w-1/2 bg-blue-500 text-white h-10 rounded-md">
+                        <button onClick={handleHome} className="w-1/2 bg-blue-500 text-white h-10 rounded-md">
                             Realizar cambios
                         </button>
                     </div>

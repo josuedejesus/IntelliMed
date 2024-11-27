@@ -8,6 +8,7 @@ import History from './pages/History';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import Profileconfig from './pages/Profileconfig';
+import Contacts from './pages/Contacts';
 
 function App() {
   return (
@@ -21,6 +22,7 @@ function App() {
           <Route path='/register' element={<Register/>}/>
           <Route path='/home' element={<Home/>}/>
           <Route path='/adjustments' element={<Profileconfig/>}/>
+          <Route path='/contacts' element={<Contacts/>}/>
         </Routes>
       </Router>
     </div>
