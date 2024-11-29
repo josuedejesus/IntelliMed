@@ -34,7 +34,7 @@ const NavBar = () => {
     }, []);
 
     return (
-        <nav className="flex items-center justify-between bg-blue-100 p-4 shadow-md">
+        <nav className="flex items-center justify-between bg-blue-100 p-4 shadow-md w-full">
             <div onClick={() => handleRedirect('')} className="flex items-center cursor-pointer">
                 <img src="/images/intellimedlogo.png" alt="logo" className="w-10 h-10"/>
                 <h1 className="text-xl font-semibold ml-2">IntelliMed</h1>

@@ -1,153 +1,127 @@
-import { useEffect, useState } from 'react';
-import ChatBox from '../components/ChatBox';
-import '../styles.css';
-import axios from 'axios';
-import { useLocation, useNavigate, useParams } from 'react-router-dom';
-import { jwtDecode } from 'jwt-decode';
-import NavBar from '../components/NavBar';
-import { FaHistory, FaRegBookmark } from 'react-icons/fa';
+import { useEffect, useState } from "react";
+import ChatBox from "../components/ChatBox";
+import "../styles.css";
+import axios from "axios";
+import { useNavigate, useParams } from "react-router-dom";
+import { jwtDecode } from "jwt-decode";
+import NavBar from "../components/NavBar";
+import { FaRegBookmark } from "react-icons/fa";
 
 const Chat = () => {
-
     const { id } = useParams();
-
     const navigate = useNavigate();
 
     const [chatId, setChatId] = useState(undefined);
-    const [content, setContent] = useState(undefined);
+    const [messages, setMessages] = useState([]);
+    const [userId, setUserId] = useState("");
+    const [loading, setLoading] = useState(false);
+    const [thinking, setThinking] = useState(false);
 
-    const [messages, setMesages] = useState([]);
+    const [newChat, setNewChat] = useState(false);
 
-    const [userId, setUserId] = useState('');
-
-    const [loading, setLoading] = useState(undefined);
-
-    const handleGetMessages = (chatId) => {
-        axios.post('http://localhost:4000/chat/get-messages', { chatId: chatId })
-        .then((response) => {
-            setMesages(response.data.data);
-        })
-        .catch((error) => {
-
-        })
-        .finally(() => {
+    const fetchMessages = async (chatId) => {
+        try {
+            setLoading(true);
+            const response = await axios.post("http://localhost:4000/chat/get-messages", { chatId });
+            setMessages(response.data.data);
+        } catch (error) {
+            console.error("Error fetching messages:", error);
+        } finally {
             setLoading(false);
-        })
-    }
+        }
+    };
 
-    const handleNewChat = () => {
-        const chatData = {
-            user_id: userId,
-            title: "Test",
-        };
+    const handleNewChat = async (initialMessage) => {
+        try {
+            const responseTitle = await axios.post("http://localhost:4000/chat/get-chat-title", { message: initialMessage });
+            const title = responseTitle.data.data;
 
-        axios.post('http://localhost:4000/chat/create-chat', { chatData: chatData })
-        .then((response) => {
-            console.log(response);
-            const chat_id = response.data.data.chat_id;
-            console.log(chat_id);
-            navigate(`/chat/${chat_id}`, { replace: true });
-            setChatId(chat_id);
-        })
-        .catch((error) => {
-            console.log(error);
-        })
-    }
+            const chatData = {
+                user_id: userId,
+                title,
+            };
+            const responseChat = await axios.post("http://localhost:4000/chat/create-chat", { chatData });
+            const newChatId = responseChat.data.data.chat_id;
 
-    const handleNewMessage = (chatId, content) => {
-        console.log('Ejecutando');
-        const messageData = {
-            chat_id: chatId,
-            sender: "c",
-            content: content
-        };
+            //navigate(`/chat/${newChatId}`, { replace: true });
+            window.history.pushState({}, '', `/chat/${newChatId}`);
 
-        console.log(messageData);
+            setChatId(newChatId);
 
-        axios.post('http://localhost:4000/chat/create-message', { messageData: messageData })
-        .then((response) => {
-            console.log(response);
-        })
-        .catch((error) => {
-            console.log(error);
-        })
-    }
+            await handleNewMessage(newChatId, initialMessage);
+        } catch (error) {
+            console.error("Error creating new chat:", error);
+        }
+    };
+
+    const handleNewMessage = async (chatId, content) => {
+        try {
+            const userMessage = { chat_id: chatId, role: "user", content };
+            await axios.post("http://localhost:4000/chat/create-message", { messageData: userMessage });
+
+            setMessages((prevMessages) => [...prevMessages, userMessage]);
+
+            const chatHistory = messages.map(({ role, content }) => ({ role, content }));
+            chatHistory.push(userMessage);
+            
+            setThinking(true);
+            const response = await axios.post("http://localhost:4000/chat/get-chat-response", { messages: chatHistory });
+
+            const systemMessage = { chat_id: chatId, role: "system", content: response.data.data };
+
+            await axios.post("http://localhost:4000/chat/create-message", { messageData: systemMessage });
+
+            setMessages((prevMessages) => [...prevMessages, systemMessage]);
+        } catch (error) {
+            console.error("Error sending message:", error);
+        } finally {
+            setThinking(false);
+        }
+    };
 
     const handleSendMessage = (message) => {
         if (chatId) {
-            handleNewMessage();
-
+            handleNewMessage(chatId, message);
         } else {
-            handleNewChat();
-
+            handleNewChat(message);
         }
-
-        const newMessage = {
-            message_id: 0,
-            chat_id: chatId,
-            message_time: 0,
-            sender: 'u',
-            content: message
-        };
-
-        setMesages((prevMessages) => [...prevMessages, newMessage])
-        setContent(message);        
-    }
+    };
 
     const handleHistory = () => {
-        navigate('/history');
-    }
-
-    const handleEndSession = () => {
-        localStorage.removeItem('accessToken');
-        localStorage.removeItem('refreshToken');
-        window.location.href = '/';
-    }
+        navigate("/history");
+    };
 
     useEffect(() => {
-        if (chatId && content) {
-            handleNewMessage(chatId, content);
-            setContent(undefined);
-        }
-    }, [chatId, content]);
-
-    useEffect(() => {
-        //const location = useLocation();
-        const accessToken = localStorage.getItem('accessToken');
+        const accessToken = localStorage.getItem("accessToken");
         if (accessToken) {
             const decoded = jwtDecode(accessToken);
             setUserId(decoded.id);
+
             if (id) {
                 setChatId(id);
-                handleGetMessages(id);
-                setLoading(true)
-            } else {
-                console.log('new chat');
+                fetchMessages(id);
             }
         } else {
-            navigate('/');
+            navigate("/");
         }
-    }, []);
+    }, [id, navigate]);
 
-    return(
-        <div className='w-full h-screen bg-gray-100'>
-            <NavBar/>
+    return (
+        <div className="w-full h-screen bg-gray-100">
+            <NavBar />
 
-            <ul className='flex w-full p-2'>
-                <li onClick={handleHistory} className='flex items-center border rounded-md p-2 cursor-pointer space-x-2 bg-white'>
-                    <FaRegBookmark/>
+            <ul className="flex w-full p-2">
+                <li onClick={handleHistory} className="flex items-center border rounded-md p-2 cursor-pointer space-x-2 bg-white">
+                    <FaRegBookmark />
                     <p>Historial</p>
                 </li>
             </ul>
-            <div className='flex justify-center items-center'>
-                <ChatBox
-                    loading={loading}
-                    onSend={handleSendMessage}
-                    messages={messages}
-                />
+
+            <div className="flex justify-center items-center">
+                <ChatBox loading={loading} thinking={thinking} onSend={handleSendMessage} messages={messages} />
             </div>
         </div>
-    )
-}
+    );
+};
 
 export default Chat;

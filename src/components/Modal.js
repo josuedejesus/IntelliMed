@@ -9,8 +9,8 @@ const Modal = ({ isOpen, onClose, title, children }) => {
             onClick={onClose}
         >
             <div
-                className="bg-white rounded-lg shadow-lg w-[50%] h-full p-4 relative"
-                onClick={(e) => e.stopPropagation()}
+                className="bg-white rounded-lg shadow-lg max-w-md w-full p-4 relative"
+                onClick={(e) => e.stopPropagation()} 
             >
                 <div className="flex justify-between items-center border-b pb-2 mb-4">
                     <h2 className="text-lg font-semibold">{title}</h2>
@@ -21,7 +21,7 @@ const Modal = ({ isOpen, onClose, title, children }) => {
                         &times;
                     </button>
                 </div>
-                <div className="text-gray-700 h-full">{children}</div>
+                <div className="text-gray-700">{children}</div>
             </div>
         </div>
     );

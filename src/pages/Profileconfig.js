@@ -1,5 +1,11 @@
 import { useNavigate } from 'react-router-dom';
 import NavBar from '../components/NavBar';
+import { useEffect, useState } from 'react';
+import { jwtDecode } from 'jwt-decode';
+import axios from 'axios';
+import Modal from '../components/Modal';
+import { FaUserXmark, FaX } from 'react-icons/fa6';
+import { FaXRay } from 'react-icons/fa';
 
 const Profileconfig = () => {
 
@@ -9,59 +15,218 @@ const Profileconfig = () => {
         navigate('/home');     
     }
 
+    const [user, setUser] = useState(undefined);
+
+    const [name, setName] = useState('');
+    const [lastname, setLasname] = useState('');
+    const [phone, setPhone] = useState('');
+
+    const [modifiedItems, setModifiedItems] = useState([]);
+
+    const [uploadedFile, setUploadedFile] = useState(null);
+    const [uploadedFileName, setUploadedFileName] = useState('');
+
+    const [details, setDetails] = useState('');
+    const [showModal, setShowModal] = useState(false);
+
+    const handleModifyData = (field, value) => {
+        setName(value);
+        switch(field) {
+            case 'name':
+                setName(value);
+                break;
+            case 'lastname':
+                setLasname(value);
+                break;
+            case 'phone':
+                setPhone(value);
+                break; 
+        }
+
+        setModifiedItems(prevItems => {
+            const updatedItems = [...prevItems];
+            const index = updatedItems.findIndex(item => item.hasOwnProperty(field));
+            if (index !== -1) {
+                updatedItems[index] = { [field]: value };
+            } else {
+                updatedItems.push({ [field]: value });
+            }
+            return updatedItems;
+        });
+    }
+
+    const handleUpdateData = () => {
+        console.log(modifiedItems);
+        axios.post('http://localhost:4000/user/update-user', { userId: user.id, updatedData: modifiedItems})
+        .then((response) => {
+            console.log(response.data);
+            localStorage.setItem('accessToken', response.data.accessToken);
+            localStorage.setItem('refreshToken', response.data.refreshToken);
+
+            setDetails(response.data.details);
+            setShowModal(true);
+        })
+        .catch((error) => {
+            console.log(error.response.data.details);
+        })
+    }
+
+    const handleFileUpload = (file) => {
+        setUploadedFile(URL.createObjectURL(file));
+        setUploadedFileName(file.name);
+    }
+
+    const handleGetFile = (userId) => {
+        axios.post('http://localhost:4000/record/get-record', {userId: userId})
+        .then((response) => {
+            //console.log(response.data.data.content.data);
+            //setFile(response.data.data);
+
+            if (response.data.data) {
+                const uint8Array = new Uint8Array(response.data.data.content.data);
+
+                const blob = new Blob([uint8Array], { type: 'application/pdf' });
+
+                const fileURL = URL.createObjectURL(blob);
+
+                setUploadedFile(fileURL);
+            }
+
+            
+        })
+        .catch((error) => {
+            console.log(error.response.data.details);
+
+        })
+    }
+
+    const handleSaveFile = async () => {
+        try {
+            const response = await fetch(uploadedFile);
+            const blob = await response.blob();
+            
+            const file = new File([blob], 'archivo.pdf', { type: blob.type });
+    
+            const formData = new FormData();
+            formData.append('file', file); 
+            formData.append('user_id', user.id);
+            formData.append('title', 'Test'); 
+    
+
+            console.log(formData);
+            const axiosResponse = await axios.post('http://localhost:4000/record/add-record', formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                }
+            });
+            setDetails(axiosResponse.data.details);
+            setShowModal(true);
+            console.log('Archivo guardado exitosamente:', axiosResponse.data);
+        } catch (error) {
+            console.error('Error al guardar el archivo:', error);
+        }
+    };
+    
+    const handleDeleteFile = () => {
+        axios.post('http://localhost:4000/record/remove-record', { userId: user.id})
+        .then((response) => {
+            setUploadedFile(null);
+            setDetails(response.data.details);
+            setShowModal(true);
+        })
+        .catch((error) => {
+
+        })
+    }
+
+    useEffect(() => {
+        const accessToken = localStorage.getItem('accessToken');
+        if (accessToken) {
+            const decoded = jwtDecode(accessToken);
+            setUser(decoded);
+            setName(decoded.name);
+            setLasname(decoded.lastname);
+            setPhone(decoded.phone);
+            handleGetFile(decoded.id);
+        } else {
+
+        }
+    },[]);
+
     return (
-        <div className="flex flex-col justify-center items-center w-full bg-blue-100 p-10 ">
-            <div className="flex w-[90%] rounded-2xl">
-                <div className="flex justify-center items-center w-[60%] bg-white rounded-l-2xl py-10">
-                    <img 
-                        src="/images/intellimedlogo.png"
-                        alt="IntelliMed" 
-                        className="w-full object-fit" 
-                    />
+        <div className="w-full flex flex-col items-center w-full h-screen bg-gray-100">
+            <NavBar/>
+            {user ? (
+            <div className='flex w-full bg-gray-100 space-x-2 w-[50%] h-[65%] p-2'>
+                <div className="flex flex-col items-center justify-center w-[50%] h-full space-y-5 pt-2 bg-white rounded-md">
+                    <div className="w-[90%] flex flex-col items-start justify-center space-y-2">
+                        <label>Nombre</label>
+                        <input onChange={(e) => handleModifyData('name', e.target.value)} value={name} className="w-full border rounded-md p-2" />
+                    </div>
+                    <div className="w-[90%] flex flex-col items-start justify-center space-y-2">
+                        <label>Apellido</label>
+                        <input onChange={(e) => handleModifyData('lastname', e.target.value)} value={lastname} className="w-full border rounded-md p-2" />
+                    </div>
+                    <div className="w-[90%] flex flex-col items-start space-y-2">
+                        <label>Número de Teléfono</label>
+                        <input onChange={(e) => handleModifyData('phone', e.target.value)} value={phone} className="w-full border rounded-md p-2" />
+                    </div>
+                    <div className="flex justify-center w-full rounded-2xl">
+                        <button onClick={handleUpdateData} className="w-1/2 bg-gray-200 hover:bg-gray-300 h-10 rounded-md">
+                            Guardar Cambios
+                        </button>
+                    </div>
+                    <p className="h-[30px]"></p>
                 </div>
-                <div className="flex flex-col items-center bg-gray-100 w-[40%] p-5 rounded-r-2xl">
-                    <p className="font-bold text-3xl mb-5">Ajuste de Cuenta</p>
-                    <div className="flex flex-col w-full space-y-5 mb-4">
-                        <div className="flex flex-col items-start space-y-2">
-                            <label>Nombre</label>
-                            <input className="w-full border rounded-md p-2" />
+                <div className='flex flex-col items-center w-[50%] h-full bg-white rounded-md'>
+                    <label>Tu Expediente Medico</label>
+                    {uploadedFile ? (
+                        <div className="w-full h-[500px] border rounded-md p-4 bg-gray-100 space-y-5">
+                            <div className='flex w-full'>
+                                <p className='w-full'>{uploadedFileName}</p>
+                                <button className='w-[30px]' onClick={() => setUploadedFile(null)}><FaX/></button>
+                            </div>
+                            
+                            <iframe 
+                                src={uploadedFile} 
+                                className="w-full h-[90%] border rounded-md mt-2"
+                                title="Vista previa del archivo"
+                            />
+                            <div className='flex space-x-2'>
+                            <button onClick={handleSaveFile} className="w-1/2 bg-gray-200 h-10 rounded-md">
+                                Guardar
+                            </button>
+                            <button onClick={handleDeleteFile} className="w-1/2 bg-gray-200 hover:bg-gray-300 h-10 rounded-md">
+                                Eliminar
+                            </button>
+                            </div>
+                            
                         </div>
-                        <div className="flex flex-col items-start space-y-2">
-                            <label>Apellido</label>
-                            <input className="w-full border rounded-md p-2" />
+                    ) : (
+                        <div>
+                            <input 
+                                type="file" 
+                                accept="application/pdf" 
+                                className="w-full border rounded-md p-2" 
+                                onChange={(e) => handleFileUpload(e.target.files[0])}
+                            />
                         </div>
-                        <div className="flex flex-col items-start space-y-2">
-                            <label>Correo Electrónico</label>
-                            <input className="w-full border rounded-md p-2" />
-                        </div>
-                        <div className="flex flex-col items-start space-y-2">
-                            <label>Número de Teléfono</label>
-                            <input className="w-full border rounded-md p-2" />
-                        </div>
-                        <div className="flex flex-col items-start space-y-2">
-                            <label>Contraseña</label>
-                            <input type="password" className="w-full border rounded-md p-2" />
-                        </div>
-                        <div className="flex flex-col items-start space-y-2">
-                            <label>Verificar Contraseña</label>
-                            <input type="password" className="w-full border rounded-md p-2" />
-                        </div>
-                        <div className="flex flex-col items-start space-y-2">
-                            <label>Tu expediente</label>
-                            <input type="file" accept="application/pdf" className="w-full border rounded-md p-2" />
-                        </div>
-                        <p className="h-[30px]"></p>
-                    </div>
-                    <div className="flex w-full space-x-2">
-                        <button onClick={handleHome} className="w-1/2 bg-buttonGreen text-white h-10 rounded-md">
-                            Salir
-                        </button>
-                        <button onClick={handleHome} className="w-1/2 bg-blue-500 text-white h-10 rounded-md">
-                            Realizar cambios
-                        </button>
-                    </div>
+                    )}
                 </div>
             </div>
+            ):(
+                <p></p>
+            )}
+            
+            <Modal isOpen={showModal}>
+                <div className='space-y-4'>
+                    <p>{details}</p>
+                    <div className='flex justify-end'>
+                        <button onClick={() => setShowModal(false)} className='rounded-md p-2 font-semibold text-white bg-blue-400'>Aceptar</button>
+                    </div>
+                </div>
+            </Modal>
+
         </div>
     );
 };
