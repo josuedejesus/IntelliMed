@@ -55,9 +55,18 @@ const Login = () => {
                         </div>   
                         <p className={` h-[30px] ${success ? 'text-green-500' : 'text-red-500'}`}>{details}</p>
                     </div>
-                    <button onClick={handleLogin} className="w-full bg-buttonGreen text-white h-10 rounded-md">
+                    <button onClick={handleLogin} className="w-full bg-blue-400 hover:bg-blue-500 text-white h-10 rounded-md">
                             Iniciar Sesión
                     </button>
+                    <p className="mt-4 text-sm text-center">
+                        ¿No tenés cuenta?{" "}
+                        <span
+                            onClick={() => navigate('/register')}
+                            className="text-blue-500 cursor-pointer"
+                        >
+                            Registrate
+                        </span>
+                    </p>
                 </div>
             </div>
         </div>

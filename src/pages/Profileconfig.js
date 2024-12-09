@@ -4,16 +4,12 @@ import { useEffect, useState } from 'react';
 import { jwtDecode } from 'jwt-decode';
 import axios from 'axios';
 import Modal from '../components/Modal';
-import { FaUserXmark, FaX } from 'react-icons/fa6';
-import { FaXRay } from 'react-icons/fa';
+import { FaX } from 'react-icons/fa6';
+
 
 const Profileconfig = () => {
 
     const navigate = useNavigate();
-
-    const handleHome = () => {
-        navigate('/home');     
-    }
 
     const [user, setUser] = useState(undefined);
 
@@ -28,6 +24,8 @@ const Profileconfig = () => {
 
     const [details, setDetails] = useState('');
     const [showModal, setShowModal] = useState(false);
+    const [hasFile, setHasFile] = useState(false);
+
 
     const handleModifyData = (field, value) => {
         setName(value);
@@ -79,9 +77,6 @@ const Profileconfig = () => {
     const handleGetFile = (userId) => {
         axios.post('http://localhost:4000/record/get-record', {userId: userId})
         .then((response) => {
-            //console.log(response.data.data.content.data);
-            //setFile(response.data.data);
-
             if (response.data.data) {
                 const uint8Array = new Uint8Array(response.data.data.content.data);
 
@@ -89,10 +84,10 @@ const Profileconfig = () => {
 
                 const fileURL = URL.createObjectURL(blob);
 
-                setUploadedFile(fileURL);
-            }
+                setHasFile(true);
 
-            
+                setUploadedFile(fileURL);
+            }            
         })
         .catch((error) => {
             console.log(error.response.data.details);
@@ -121,7 +116,7 @@ const Profileconfig = () => {
             });
             setDetails(axiosResponse.data.details);
             setShowModal(true);
-            console.log('Archivo guardado exitosamente:', axiosResponse.data);
+            setHasFile(true);
         } catch (error) {
             console.error('Error al guardar el archivo:', error);
         }
@@ -133,6 +128,7 @@ const Profileconfig = () => {
             setUploadedFile(null);
             setDetails(response.data.details);
             setShowModal(true);
+            setHasFile(false);
         })
         .catch((error) => {
 
@@ -156,8 +152,17 @@ const Profileconfig = () => {
     return (
         <div className="w-full flex flex-col items-center w-full h-screen bg-gray-100">
             <NavBar/>
+            <div className="bg-green-100 text-green-800 p-4 rounded-md mb-4 shadow">
+                <h2 className="text-lg font-semibold">¿Qué podés hacer aquí?</h2>
+                <p className="text-sm mt-1">
+                    En esta sección podés actualizar tu información personal, como nombre, apellido o número de teléfono, para mantener tu perfil al día.  
+                    Además, podes gestionar tu expediente médico, subir nuevos documentos o eliminar los existentes. Esto ayuda a mejorar la precisión y personalización de tus consultas médicas.
+                </p>
+            </div>
+
             {user ? (
-            <div className='flex w-full bg-gray-100 space-x-2 w-[50%] h-[65%] p-2'>
+            <div className='flex w-full bg-gray-100 space-x-2 w-[50%] h-[65%] pr-2 pl-2'>
+                
                 <div className="flex flex-col items-center justify-center w-[50%] h-full space-y-5 pt-2 bg-white rounded-md">
                     <div className="w-[90%] flex flex-col items-start justify-center space-y-2">
                         <label>Nombre</label>
@@ -179,12 +184,14 @@ const Profileconfig = () => {
                     <p className="h-[30px]"></p>
                 </div>
                 <div className='flex flex-col items-center w-[50%] h-full bg-white rounded-md'>
-                    <label>Tu Expediente Medico</label>
+                    <label>Tu Expediente Médico</label>
                     {uploadedFile ? (
-                        <div className="w-full h-[500px] border rounded-md p-4 bg-gray-100 space-y-5">
+                        <div className="w-full h-[500px] p-4 space-y-5">
                             <div className='flex w-full'>
                                 <p className='w-full'>{uploadedFileName}</p>
-                                <button className='w-[30px]' onClick={() => setUploadedFile(null)}><FaX/></button>
+                                {!hasFile && (
+                                    <button className='w-[30px]' onClick={() => setUploadedFile(null)}><FaX/></button>
+                                )}
                             </div>
                             
                             <iframe 
@@ -192,13 +199,20 @@ const Profileconfig = () => {
                                 className="w-full h-[90%] border rounded-md mt-2"
                                 title="Vista previa del archivo"
                             />
-                            <div className='flex space-x-2'>
-                            <button onClick={handleSaveFile} className="w-1/2 bg-gray-200 h-10 rounded-md">
-                                Guardar
-                            </button>
-                            <button onClick={handleDeleteFile} className="w-1/2 bg-gray-200 hover:bg-gray-300 h-10 rounded-md">
-                                Eliminar
-                            </button>
+                            <div className='flex justify-center space-x-2'>
+                            
+                            
+                                {hasFile ? (
+                                    <button onClick={handleDeleteFile} className="w-1/2 bg-gray-200 hover:bg-gray-300 h-10 rounded-md">
+                                        Eliminar
+                                    </button>
+                                ) : (
+                                    <button onClick={handleSaveFile} className="w-1/2 bg-gray-200 hover:bg-gray-300 h-10 rounded-md">
+                                        Guardar
+                                    </button>
+                                )}
+                                
+                            
                             </div>
                             
                         </div>

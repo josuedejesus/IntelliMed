@@ -65,7 +65,7 @@ const Chat = () => {
             chatHistory.push(userMessage);
             
             setThinking(true);
-            const response = await axios.post("http://localhost:4000/chat/get-chat-response", { messages: chatHistory });
+            const response = await axios.post("http://localhost:4000/chat/get-chat-response", { messages: chatHistory, userId: userId });
 
             const systemMessage = { chat_id: chatId, role: "system", content: response.data.data };
 

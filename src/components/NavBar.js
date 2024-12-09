@@ -3,6 +3,8 @@ import '../styles.css'
 import { useEffect, useState } from 'react';
 import { jwtDecode } from 'jwt-decode';
 import { useNavigate } from 'react-router-dom';
+import { IoMdSettings } from 'react-icons/io';
+import { CgLogOut } from 'react-icons/cg';
 
 
 
@@ -53,8 +55,14 @@ const NavBar = () => {
                             {show && (
                                 <div className='absolute right-0 mt-2 w-48 bg-white border rounded-b-md shadow-lg'>
                                     <ul className='py-2'>
-                                        <li onClick={() => handleRedirect('adjustments')} className='px-4 py-2 hover:bg-gray-100 cursor-pointer'>Ajustes</li>
-                                        <li onClick={handleEndSession} className='px-4 py-2 hover:bg-gray-100 cursor-pointer'>Cerrar Sesión</li>
+                                        <li onClick={() => handleRedirect('adjustments')} className='flex items-center justify-center px-4 py-2 hover:bg-gray-100 cursor-pointer'>
+                                            <p className='w-[40px]'><IoMdSettings/></p>
+                                            <p className='w-full'>Ajustes</p>
+                                        </li>
+                                        <li onClick={() => handleEndSession()} className='flex items-center justify-center px-4 py-2 hover:bg-gray-100 cursor-pointer'>
+                                            <p className='w-[40px]'><CgLogOut/></p>
+                                            <p className='w-full'>Cerrar Sesión</p>
+                                        </li>
                                     </ul>
                                 </div>
                             )}
@@ -63,6 +71,7 @@ const NavBar = () => {
                 ):(
                     <div>
                         <button onClick={() => handleRedirect('login')} className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-600 ml-4">
+                            
                             Iniciar Sesión
                         </button>
                         <button onClick={() => handleRedirect('register')} className="bg-white-600 text-blue px-4 py-2 rounded hover:bg-white-600">

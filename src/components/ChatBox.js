@@ -49,7 +49,7 @@ const ChatBox = ({
                 <div className="flex flex-col items-center justify-center w-full h-screen">
                     <ClipLoader
                         size={80}
-                        color="#4fa94d"
+                        color="gray"
                         loading={true}
                     />
                 </div>
